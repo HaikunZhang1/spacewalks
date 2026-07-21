@@ -5,14 +5,18 @@ import pandas as pd
 input_file = open('./eva-data.json', 'r', encoding='ascii')
 output_file = open('./eva-data.csv', 'w', encoding='utf-8')
 graph_file = './cumulative_eva_graph.png'
-
+'''
+Read the json input file in ascii
+Convert eva column in dataframe to float for calculations late
+Drop all NA values in duration and date columns (INPLACE)
+'''
 eva_df = pd.read_json(input_file, convert_dates=['date'], encoding='ascii')
-eva_df['eva'] = eva_df['eva'].astype(float)
+eva_df['eva'] = eva_df['eva'].astype(float)          # Convert eva column to float for calculations
 eva_df.dropna(axis=0, subset=['duration', 'date'], inplace=True)
 
-eva_df.to_csv(output_file, index=False, encoding='utf-8')
+eva_df.to_csv(output_file, index=False, encoding='utf-8') # Save eva to a CSV file
 
-eva_df.sort_values('date', inplace=True)
+eva_df.sort_values('date', inplace=True)           # Sort eva by date
 
 eva_df['duration_hours'] = eva_df['duration'].str.split(":").apply(lambda x: int(x[0]) + int(x[1])/60)
 eva_df['cumulative_time'] = eva_df['duration_hours'].cumsum()
